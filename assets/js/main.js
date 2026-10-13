@@ -1,0 +1,1 @@
+document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.style.background='#e9e5de';img.alt='Gambar produk tidak tersedia';});});
