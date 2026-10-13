@@ -1,1 +1,19 @@
-</main><footer class="footer"><div class="container footer-inner"><div><strong>FASHION STORE.</strong><p>Gaya sederhana untuk setiap hari.</p></div><div><a href="products.php">Belanja</a><a href="cart.php">Keranjang</a></div><small>© <?=date('Y')?> Fashion Store. Demo toko online.</small></div></footer><script src="assets/js/main.js"></script></body></html>
+</main>
+
+<footer class="footer">
+	<div class="container footer-inner">
+		<div>
+			<strong>FASHION STORE.</strong>
+			<p>Gaya sederhana untuk setiap hari.</p>
+		</div>
+		<div>
+			<a href="products.php">Belanja</a>
+			<a href="cart.php">Keranjang</a>
+		</div>
+		<small>© <?= date('Y') ?> Fashion Store. Demo toko online.</small>
+	</div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
