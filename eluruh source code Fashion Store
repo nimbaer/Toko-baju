@@ -1,0 +1,246 @@
+[1mdiff --git a/cart.php b/cart.php[m
+[1mindex 75cbab8..adea454 100644[m
+[1m--- a/cart.php[m
+[1m+++ b/cart.php[m
+[36m@@ -1 +1,238 @@[m
+[31m-<?php require 'config/functions.php';$pageTitle='Keranjang';$items=cart_products($pdo);$total=0;include 'partials/header.php';?><section class="container section"><h1 class="page-title">Keranjang Belanja</h1><?php if(!$items):?><div class="empty"><h2>Keranjang masih kosong</h2><p>Yuk temukan pakaian favoritmu.</p><a class="btn btn-dark" href="products.php">Mulai Belanja</a></div><?php else:?><div class="cart-layout"><div><?php foreach($items as $item):$subtotal=$item['price']*$item['quantity'];$total+=$subtotal;?><div class="cart-item"><img src="<?=e($item['image'])?>" alt="<?=e($item['name'])?>"><div class="cart-item-info"><h3><?=e($item['name'])?></h3><p><?=rupiah($item['price'])?></p><form method="post" action="cart_action.php" class="qty-form"><input type="hidden" name="csrf" value="<?=e(csrf())?>"><input type="hidden" name="id" value="<?=(int)$item['id']?>"><input type="hidden" name="action" value="update"><input type="number" name="quantity" min="0" max="<?=(int)$item['stock']?>" value="<?=(int)$item['quantity']?>"><button class="btn btn-outline">Update</button></form><form method="post" action="cart_action.php"><input type="hidden" name="csrf" value="<?=e(csrf())?>"><input type="hidden" name="id" value="<?=(int)$item['id']?>"><input type="hidden" name="action" value="remove"><button class="text-button">Hapus</button></form></div><strong><?=rupiah($subtotal)?></strong></div><?php endforeach;?></div><aside class="summary"><h2>Ringkasan Belanja</h2><div class="summary-row"><span>Subtotal</span><strong><?=rupiah($total)?></strong></div><p class="muted">Biaya pengiriman belum termasuk.</p><a class="btn btn-dark full" href="checkout.php">Lanjut Checkout →</a></aside></div><?php endif;?></section><?php include 'partials/footer.php';?>[m
+\ No newline at end of file[m
+[32m+[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m// ==========================================[m
+[32m+[m[32m// 1. MEMANGGIL FUNCTIONS[m
+[32m+[m[32m// ==========================================[m
+[32m+[m
+[32m+[m[32mrequire 'config/functions.php';[m
+[32m+[m
+[32m+[m[32m// Judul halaman[m
+[32m+[m[32m$pageTitle = 'Keranjang';[m
+[32m+[m
+[32m+[m[32m// Mengambil produk dari session keranjang[m
+[32m+[m[32m$items = cart_products($pdo);[m
+[32m+[m
+[32m+[m[32m// Inisialisasi total belanja[m
+[32m+[m[32m$total = 0;[m
+[32m+[m
+[32m+[m[32m// Memanggil header[m
+[32m+[m[32minclude 'partials/header.php';[m
+[32m+[m
+[32m+[m[32m?>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<!-- ==========================================[m
+[32m+[m[32m     2. HALAMAN KERANJANG BELANJA[m
+[32m+[m[32m========================================== -->[m
+[32m+[m
+[32m+[m[32m<section class="container section">[m
+[32m+[m
+[32m+[m[32m    <h1 class="page-title">[m
+[32m+[m[32m        Keranjang Belanja[m
+[32m+[m[32m    </h1>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    <!-- JIKA KERANJANG KOSONG -->[m
+[32m+[m
+[32m+[m[32m    <?php if (!$items): ?>[m
+[32m+[m
+[32m+[m[32m        <div class="empty">[m
+[32m+[m
+[32m+[m[32m            <h2>Keranjang masih kosong</h2>[m
+[32m+[m
+[32m+[m[32m            <p>[m
+[32m+[m[32m                Yuk temukan pakaian favoritmu.[m
+[32m+[m[32m            </p>[m
+[32m+[m
+[32m+[m[32m            <a class="btn btn-dark" href="products.php">[m
+[32m+[m[32m                Mulai Belanja[m
+[32m+[m[32m            </a>[m
+[32m+[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    <!-- JIKA KERANJANG BERISI PRODUK -->[m
+[32m+[m
+[32m+[m[32m    <?php else: ?>[m
+[32m+[m
+[32m+[m[32m        <div class="cart-layout">[m
+[32m+[m
+[32m+[m[32m            <!-- DAFTAR PRODUK -->[m
+[32m+[m
+[32m+[m[32m            <div>[m
+[32m+[m
+[32m+[m[32m                <?php foreach ($items as $item): ?>[m
+[32m+[m
+[32m+[m[32m                    <?php[m
+[32m+[m
+[32m+[m[32m                    // Menghitung subtotal setiap produk[m
+[32m+[m[32m                    $subtotal = $item['price'] * $item['quantity'];[m
+[32m+[m
+[32m+[m[32m                    // Menambahkan subtotal ke total belanja[m
+[32m+[m[32m                    $total += $subtotal;[m
+[32m+[m
+[32m+[m[32m                    ?>[m
+[32m+[m
+[32m+[m[32m                    <div class="cart-item">[m
+[32m+[m
+[32m+[m[32m                        <!-- GAMBAR PRODUK -->[m
+[32m+[m
+[32m+[m[32m                        <img[m
+[32m+[m[32m                            src="<?= e($item['image']) ?>"[m
+[32m+[m[32m                            alt="<?= e($item['name']) ?>"[m
+[32m+[m[32m                        >[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                        <!-- INFORMASI PRODUK -->[m
+[32m+[m
+[32m+[m[32m                        <div class="cart-item-info">[m
+[32m+[m
+[32m+[m[32m                            <h3>[m
+[32m+[m[32m                                <?= e($item['name']) ?>[m
+[32m+[m[32m                            </h3>[m
+[32m+[m
+[32m+[m[32m                            <p>[m
+[32m+[m[32m                                <?= rupiah($item['price']) ?>[m
+[32m+[m[32m                            </p>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                            <!-- FORM UPDATE JUMLAH PRODUK -->[m
+[32m+[m
+[32m+[m[32m                            <form[m
+[32m+[m[32m                                method="post"[m
+[32m+[m[32m                                action="cart_action.php"[m
+[32m+[m[32m                                class="qty-form"[m
+[32m+[m[32m                            >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="csrf"[m
+[32m+[m[32m                                    value="<?= e(csrf()) ?>"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="id"[m
+[32m+[m[32m                                    value="<?= (int) $item['id'] ?>"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="action"[m
+[32m+[m[32m                                    value="update"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="number"[m
+[32m+[m[32m                                    name="quantity"[m
+[32m+[m[32m                                    min="0"[m
+[32m+[m[32m                                    max="<?= (int) $item['stock'] ?>"[m
+[32m+[m[32m                                    value="<?= (int) $item['quantity'] ?>"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <button[m
+[32m+[m[32m                                    type="submit"[m
+[32m+[m[32m                                    class="btn btn-outline"[m
+[32m+[m[32m                                >[m
+[32m+[m[32m                                    Update[m
+[32m+[m[32m                                </button>[m
+[32m+[m
+[32m+[m[32m                            </form>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                            <!-- FORM HAPUS PRODUK -->[m
+[32m+[m
+[32m+[m[32m                            <form[m
+[32m+[m[32m                                method="post"[m
+[32m+[m[32m                                action="cart_action.php"[m
+[32m+[m[32m                            >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="csrf"[m
+[32m+[m[32m                                    value="<?= e(csrf()) ?>"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="id"[m
+[32m+[m[32m                                    value="<?= (int) $item['id'] ?>"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <input[m
+[32m+[m[32m                                    type="hidden"[m
+[32m+[m[32m                                    name="action"[m
+[32m+[m[32m                                    value="remove"[m
+[32m+[m[32m                                >[m
+[32m+[m
+[32m+[m[32m                                <button[m
+[32m+[m[32m                                    type="submit"[m
+[32m+[m[32m                                    class="text-button"[m
+[32m+[m[32m                                >[m
+[32m+[m[32m                                    Hapus[m
+[32m+[m[32m                                </button>[m
+[32m+[m
+[32m+[m[32m                            </form>[m
+[32m+[m
+[32m+[m[32m                        </div>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                        <!-- SUBTOTAL PRODUK -->[m
+[32m+[m
+[32m+[m[32m                        <strong>[m
+[32m+[m[32m                            <?= rupiah($subtotal) ?>[m
+[32m+[m[32m                        </strong>[m
+[32m+[m
+[32m+[m[32m                    </div>[m
+[32m+[m
+[32m+[m[32m                <?php endforeach; ?>[m
+[32m+[m
+[32m+[m[32m            </div>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            <!-- ==========================================[m
+[32m+[m[32m                 3. RINGKASAN BELANJA[m
+[32m+[m[32m            ========================================== -->[m
+[32m+[m
+[32m+[m[32m            <aside class="summary">[m
+[32m+[m
+[32m+[m[32m                <h2>[m
+[32m+[m[32m                    Ringkasan Belanja[m
+[32m+[m[32m                </h2>[m
+[32m+[m
+[32m+[m[32m                <div class="summary-row">[m
+[32m+[m
+[32m+[m[32m                    <span>Subtotal</span>[m
+[32m+[m
+[32m+[m[32m                    <strong>[m
+[32m+[m[32m                        <?= rupiah($total) ?>[m
+[32m+[m[32m                    </strong>[m
+[32m+[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <p class="muted">[m
+[32m+[m[32m                    Biaya pengiriman belum termasuk.[m
+[32m+[m[32m                </p>[m
+[32m+[m
+[32m+[m[32m                <a[m
+[32m+[m[32m                    class="btn btn-dark full"[m
+[32m+[m[32m                    href="checkout.php"[m
+[32m+[m[32m                >[m
+[32m+[m[32m                    Lanjut Checkout →[m
+[32m+[m[32m                </a>[m
+[32m+[m
+[32m+[m[32m            </aside>[m
+[32m+[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m[32m    <?php endif; ?>[m
+[32m+[m
+[32m+[m[32m</section>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<!-- ==========================================[m
+[32m+[m[32m     4. FOOTER[m
+[32m+[m[32m========================================== -->[m
+[32m+[m
+[32m+[m[32m<?php include 'partials/footer.php'; ?>[m
+\ No newline at end of file[m
